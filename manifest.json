@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "copfix",
+    "version": "1.6",
+    "description": "\n Это расширение, которое меняет стиль журнала, добавляет новые функции и убирает некоторые баги\n",
+    "permissions": ["activeTab"],
+    "host_permissions": ["https://cop.admhmao.ru/"],
+    "content_scripts": [
+      {
+        "matches": ["https://cop.admhmao.ru/*"],
+        "css": ["styles.css"],
+        "js": ["content.js"]
+      }
+    ]
+  }
