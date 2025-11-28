@@ -1,5 +1,5 @@
 
-
+/* it works, so don't touch it anymore*/
 .navigation-tabs__inner {
     height: 42px !important;
 }
@@ -9,53 +9,7 @@ a.navigation-main__home:hover {
 }
 
 
-
-/* ой это че за штука? надо расскоментировать ее */
+/* should have been a "lethal" function */
 /* body {
     display: none !important;
 } */
-
-
-
-
-
-
-/* вообще хз че это такое, пусть будет */
-/*
-.dnevnik-day {
-    border-radius: 10px;
-    }
-/* 
-.button--purple.button--outline, .button--purple, .button--purple {
-    --color-text: #5464ff;
-    --color-text-hover: #fff;
-    --color-text-disabled: #c0c4cc;
-    --color-text-active: #fff;
-    --color-border: #5464ff;
-    --color-border-hover: #5464ff;
-    --color-border-focus: #0073bf;
-    --color-border-disabled: #caced6;
-    --color-border-active: #5464ff;
-    --color-background: #f4f6ff;
-    --color-background-hover: #0073bf;
-    --color-background-disabled: #eeeef5;
-    --color-background-active: #0065a9;
-} */
-
-/* .navigation-main__item:hover {
-    background-color: #1a1a1a;
-}
-
-.navigation-main {
-    background-color: #252729;
-}
-
-.menu0-item__triangle {
-    background-color: #252729;
-} */
-
-/* .navigation-main__item {
-    border-left: 3px;
-    border-color: #1a1a1a;
-} */
-

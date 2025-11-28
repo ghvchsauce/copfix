@@ -288,20 +288,17 @@ style.textContent += `
     -webkit-backdrop-filter: blur(3px);
     background: rgba(245, 245, 250, 0.7);
     }
+
+    .button__title{
+    max-width: 370px;
+    }
 `
 
 // CLASS HIDING
 style.textContent += `
 
-    .context__triangle.context__triangle--before{
-    display: none;
-    }
-
-    div#dnevnik-header {
-    display: none;
-    }
-
-
+    .context__triangle.context__triangle--before,
+    div#dnevnik-header,
     .nav-top-itemL1,
     .nav-top-itemL4,
     .nav-top-itemL3,
@@ -309,18 +306,12 @@ style.textContent += `
     .nav-top-itemR1,
     .nav-top-itemR4,
     .nav-top-itemR5,
-    .nav-separator-left {
-    display: none !important;
-    }
-
+    .nav-separator-left,
     .navMainItem5,
     .YgGDIgX4UnCMxIDV5lXb,
     .xQ1EV2wqnUrjHVrywTWi.sbZRdHKe4qTfX_qNUCs0,
     a.fcLi9BZtUSuGnxmDQ91Q.fmwT93fxHyikcrhmFerr,
-    .c6Sjixx4DRfr9uIqwQt2  {
-    display: none;
-    }
-
+    .c6Sjixx4DRfr9uIqwQt2,
     a.navigation-top-item.navigation-top-item--icon.navigation-top-item--warning,
     a.navigation-top-item.navigation-top-item--important,
     a.navigation-top-item.navigation-top-item--icon.navigation-top-item--important2,
@@ -328,10 +319,9 @@ style.textContent += `
     a.menu0-item.menu0-item-tests,
     a.menu0-item.menu0-item-raspisanie,
     .page-print__item,
-    .notice.notice--green {
-
+    .notice.notice--green
+    {
     display: none !important;
-
     }
 `
 document.head.appendChild(style);
@@ -489,92 +479,157 @@ if (window.location.href.includes('https://cop.admhmao.ru/journal-app')) {
 
 
 // UP BUTTON
-const scrollTopBtn = document.createElement('button');
-scrollTopBtn.textContent = '↑';
-scrollTopBtn.style.position = 'fixed';
-scrollTopBtn.style.bottom = '10px';
-scrollTopBtn.style.right = '14px';
-scrollTopBtn.style.padding = '8px';
-scrollTopBtn.style.width = '40px';
-scrollTopBtn.style.height = '40px';
-scrollTopBtn.style.fontSize = '20px';
-scrollTopBtn.style.background = 'rgba(245, 245, 250, 0.7)';
-scrollTopBtn.style.color = 'black';
-scrollTopBtn.style.border = '1px solid rgba(215, 215, 215, 0.9)';
-scrollTopBtn.style.borderRadius = '50%';
-scrollTopBtn.style.backdropFilter = 'blur(3px)';
-scrollTopBtn.style.webkitBackdropFilter = 'blur(3px)';
-scrollTopBtn.style.cursor = 'pointer';
-scrollTopBtn.style.zIndex = '999999';
-scrollTopBtn.style.transition = '0.3s ease, transform 0.2s ease';
-scrollTopBtn.style.userSelect = 'none';
-scrollTopBtn.style.opacity = '0';
-scrollTopBtn.style.pointerEvents = 'none';
-scrollTopBtn.style.transform = 'none';
-document.body.appendChild(scrollTopBtn);
+(function () {
+  const ready = (cb) => {
+    if (document.body) return cb();
+    document.addEventListener('DOMContentLoaded', cb, { once: true });
+  };
 
-// плавное появление при скролле
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 100) {
-    scrollTopBtn.style.opacity = '1';
-    scrollTopBtn.style.pointerEvents = 'auto';
-  } else {
-    scrollTopBtn.style.opacity = '0';
-    scrollTopBtn.style.pointerEvents = 'none';
-  }
-});
+  ready(() => {
+    const css = `
+      .scroll-top-btn {
+        position: fixed;
+        bottom: 10px;
+        right: 14px;
+        padding: 8px;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        background: rgba(245, 245, 250, 0.7);
+        color: black;
+        border: 1px solid rgba(215, 215, 215, 0.9);
+        border-radius: 50%;
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+        cursor: pointer;
+        z-index: 999999;
+        transition: opacity 0.3s ease, transform 0.2s ease, background 0.2s ease;
+        user-select: none;
+        opacity: 0;
+        pointer-events: none;
+        transform: none;
+      }
+      .scroll-top-btn.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .scroll-top-btn.hovered {
+        background: rgba(255,255,255,0.2);
+        transform: scale(1.1);
+      }
+      .scroll-top-btn.not-hovered {
+        background: rgba(245, 245, 250, 0.7);
+        transform: scale(1);
+      }
+    `;
+    const styleEl = document.createElement('style');
+    styleEl.textContent = css;
+    document.head.appendChild(styleEl);
 
-// smooth scroll
-scrollTopBtn.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+    const scrollTopBtn = document.createElement('button');
+    scrollTopBtn.type = 'button';
+    scrollTopBtn.className = 'scroll-top-btn not-hovered';
+    scrollTopBtn.textContent = '↑';
+    scrollTopBtn.setAttribute('aria-label', 'scroll to top');
 
-// hover
-scrollTopBtn.onmouseenter = () => {
-  scrollTopBtn.style.background = 'rgba(255,255,255,0.2)';
-  scrollTopBtn.style.transform = 'scale(1.1)';
-};
-scrollTopBtn.onmouseleave = () => {
-  scrollTopBtn.style.background = 'rgba(245, 245, 250, 0.7)';
-  scrollTopBtn.style.transform = 'scale(1)';
-};
+    document.body.appendChild(scrollTopBtn);
 
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        if (window.scrollY > 100) {
+          scrollTopBtn.classList.add('visible');
+        } else {
+          scrollTopBtn.classList.remove('visible');
+        }
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    scrollTopBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        scrollTopBtn.click();
+      }
+    });
+
+    scrollTopBtn.addEventListener('mouseenter', () => {
+      scrollTopBtn.classList.remove('not-hovered');
+      scrollTopBtn.classList.add('hovered');
+    });
+    scrollTopBtn.addEventListener('mouseleave', () => {
+      scrollTopBtn.classList.remove('hovered');
+      scrollTopBtn.classList.add('not-hovered');
+    });
+  });
+})();
 
 
 
 // NEXT DAY BUTTON
 
-if (window.location.href.includes('https://cop.admhmao.ru/journal-app')) {
-  const btn = document.createElement('button');
-    btn.className = 'btn-nextday';
-    btn.textContent = 'к следующему дню';
-    btn.style.cssText = `
-      position: fixed;
-      bottom: 10px;
-      padding: 10px 16px;
-      font-size: 14px;
-      background: rgba(245, 245, 250, 0.7);
-      color: black;
-      border: 1px solid rgba(215, 215, 215, 0.9);
-      border-radius: 16px;
-      backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
-      cursor: pointer;
-      z-index: 999999;
-      transition: 0.2s ease;
-      user-select: none;
-      left: 50%;
-      transform: translateX(-50%);
-    `;
+(function () {
+  const hostFragment = 'https://cop.admhmao.ru/journal-app';
+  if (!window.location.href.includes(hostFragment)) return;
 
-    btn.onmouseenter = () => {
-      btn.style.background = 'rgba(255,255,255,0.2)';
-      btn.style.transform = 'translateX(-50%) scale(1.1)';
-    };
-    btn.onmouseleave = () => {
-      btn.style.background = 'rgba(255,255,255,0.1)';
-      btn.style.transform = 'translateX(-50%) scale(1)';
-    };
+  const ensureBody = (cb) => {
+    if (document.body) return cb();
+    document.addEventListener('DOMContentLoaded', cb, { once: true });
+  };
+
+  ensureBody(() => {
+    const styleContent = `
+      .btn-nextday {
+        position: fixed;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%) scale(1);
+        padding: 10px 16px;
+        font-size: 14px;
+        background: rgba(245, 245, 250, 0.7);
+        color: black;
+        border: 1px solid rgba(215, 215, 215, 0.9);
+        border-radius: 16px;
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+        cursor: pointer;
+        z-index: 999999;
+        transition: transform 0.2s ease, background 0.2s ease;
+        user-select: none;
+      }
+      .btn-nextday.hovered {
+        background: rgba(255,255,255,0.2);
+        transform: translateX(-50%) scale(1.1);
+      }
+      .btn-nextday.after {
+        background: rgba(255,255,255,0.1);
+        transform: translateX(-50%) scale(1);
+      }
+    `;
+    const styleEl = document.createElement('style');
+    styleEl.textContent = styleContent;
+    document.head.appendChild(styleEl);
+
+    const btn = document.createElement('button');
+    btn.className = 'btn-nextday initial';
+    btn.textContent = 'к следующему дню';
+
+    btn.addEventListener('mouseenter', () => {
+      btn.classList.remove('initial', 'after');
+      btn.classList.add('hovered');
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.classList.remove('hovered');
+      btn.classList.add('after');
+    });
 
     document.body.appendChild(btn);
 
@@ -583,10 +638,10 @@ if (window.location.href.includes('https://cop.admhmao.ru/journal-app')) {
       let day = now.getDay();
 
       if (day === 5 || day === 6 || day === 0) {
-      const base = window.location.href.replace(/week\.[^/]+/, '').replace(/\/$/, '');
-      window.location.href = `${base}/week.-1`;
-      return;
-      } 
+        const base = window.location.href.replace(/week\.[^/]+/, '').replace(/\/$/, '');
+        window.location.href = `${base}/week.-1`;
+        return;
+      }
 
       if (day === 6) {
         day = 0;
@@ -595,16 +650,46 @@ if (window.location.href.includes('https://cop.admhmao.ru/journal-app')) {
       const days = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
       const nextDay = days[(day + 1) % 7].toLowerCase();
 
-      const el = [...document.querySelectorAll('*')]
-        .find(e => {
-          const t = e.textContent?.trim().toLowerCase();
-          return t && t.startsWith(nextDay);
-        });
+      let foundEl = null;
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, null);
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const t = node.textContent?.trim()?.toLowerCase();
+        if (t && t.startsWith(nextDay)) {
+          foundEl = node;
+          break;
+        }
+      }
 
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (foundEl) {
+        foundEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
         alert(`"${nextDay}" not found`);
       }
     });
-}
+  });
+})();
+
+
+// BETA
+// i wish i could make it soon
+
+// SUBJECTS FILTER
+// im dead
+// if (window.location.href.includes('https://cop.admhmao.ru/journal-app')) {
+//   const subFilter = document.createElement('buttom');
+//   subFilter.className = 'subFilter';
+//   subFilter.style.cssText = `
+//     padding: 6px 14px;
+//     font-size: 14px;
+//     background: rgba(245, 245, 250, 0.8);
+//     color: black;
+//     border: 1px solid rgba(215, 215, 215, 0.9);
+//     border-radius: 16px;
+//     backdrop-filter: blur(2px);
+//     -webkit-backdrop-filter: blur(2px);
+//     cursor: pointer;
+//     transition: 0.2s ease;
+//     user-select: none;
+//     `
+// }
