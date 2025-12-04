@@ -586,6 +586,14 @@ if (window.location.href.includes('https://cop.admhmao.ru/journal-app')) {
   };
 
   ensureBody(() => {
+
+    if (localStorage.getItem('runNextDayAfterRedirect') === '1') {
+      localStorage.removeItem('runNextDayAfterRedirect');
+      setTimeout(() => {
+        runMainLogic();
+      }, 200);
+    }
+
     const styleContent = `
       .btn-nextday {
         position: fixed;
@@ -634,11 +642,31 @@ if (window.location.href.includes('https://cop.admhmao.ru/journal-app')) {
     document.body.appendChild(btn);
 
     btn.addEventListener('click', () => {
+      const okUrls = [
+        'https://cop.admhmao.ru/journal-app/u.3728',
+        'https://cop.admhmao.ru/journal-app/u.3728/',
+        'https://cop.admhmao.ru/journal-app/u.3728/week.0'
+      ];
+
+      const current = window.location.href;
+
+      if (!okUrls.includes(current)) {
+        localStorage.setItem('runNextDayAfterRedirect', '1');
+        window.location.href = 'https://cop.admhmao.ru/journal-app/u.3728/week.0';
+        return;
+      }
+
+      runMainLogic();
+    });
+
+    function runMainLogic() {
       const now = new Date();
       let day = now.getDay();
 
       if (day === 5 || day === 6 || day === 0) {
-        const base = window.location.href.replace(/week\.[^/]+/, '').replace(/\/$/, '');
+        const base = window.location.href
+          .replace(/week\.[^/]+/, '')
+          .replace(/\/$/, '');
         window.location.href = `${base}/week.-1`;
         return;
       }
@@ -647,11 +675,19 @@ if (window.location.href.includes('https://cop.admhmao.ru/journal-app')) {
         day = 0;
       }
 
-      const days = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+      const days = [
+        'Воскресенье','Понедельник','Вторник',
+        'Среда','Четверг','Пятница','Суббота'
+      ];
       const nextDay = days[(day + 1) % 7].toLowerCase();
 
       let foundEl = null;
-      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, null);
+      const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_ELEMENT,
+        null
+      );
+
       while (walker.nextNode()) {
         const node = walker.currentNode;
         const t = node.textContent?.trim()?.toLowerCase();
@@ -666,7 +702,8 @@ if (window.location.href.includes('https://cop.admhmao.ru/journal-app')) {
       } else {
         alert(`"${nextDay}" not found`);
       }
-    });
+    }
+
   });
 })();
 
